@@ -1,0 +1,142 @@
+﻿@using JokesMVC2023.Areas.Identity.Data;
+@using Microsoft.AspNetCore.Identity;
+@using JokesMVC2023.Areas.Identity.Pages.Account.Manage;
+
+@inject SignInManager<AppUser> signinManager
+@inject UserManager<AppUser> userManager
+@inject ProfilePictureUploader profilePhotoUploader
+
+@model IEnumerable<JokesMVC2023.Models.Data.Joke>
+
+@{
+    ViewData["Title"] = "Public Jokes";
+}
+
+@{
+    var user = await userManager.GetUserAsync(User);
+}
+
+
+<div class="text-center w-100">
+    <h2>Public Jokes</h2>
+</div>
+
+<div class="row d-flex justify-content-center">
+    <div class="col-12 border border-dark w-75 rounded-1 p-1 shadow d-flex">
+        <form class="row align-items-baseline" asp-action="Search" style="padding:2px !important; width:100% !important">
+            <div class="col-sm justify-content-center" style="margin:0px">
+                <label style="white-space:nowrap;">Search By Question:</label>
+            </div>
+            <div class="col-sm justify-content-center">
+                <input type="text" style="width: 100%;" name="questionSearch" id="questionSearch" />
+            </div>
+            <div class="col-sm justify-content-center">
+                <label style="white-space:nowrap;">Search By Answer:</label>
+            </div>
+            <div class="col-sm justify-content-center">
+                <input type="text" style="width: 100%;" name="answerSearch" id="questionSearch" />
+            </div>
+            <div class="col-sm-2 justify-content-center">
+                <input type="submit" class="btn back-button-color text-colour" value="Search" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (signinManager.IsSignedIn(User))
+{
+    <div class="text-center w-100 mt-2">
+        <a class="btn back-button-color text-colour" asp-action="Create" asp-route-id="@user.Id">Create New Joke</a> 
+    </div>
+} else
+{
+    <div class="text-center w-100 mt-2">
+        <p>Sign up to write your own jokes.</p>
+    </div>
+}
+
+
+
+
+
+    @foreach(var item in Model){
+    <div class="card flex-row w-100 m-2 p-2 shadow back-card-background-color">
+        <div class="">
+            @{
+                byte[] fileBytes = await profilePhotoUploader.ReadFileIntoMemory(item.AppUser.ProfilePhotoFileName);
+                var imageDate = Convert.ToBase64String(fileBytes);
+                var fileExtention = profilePhotoUploader.GetFileExtentsion(item.AppUser.ProfilePhotoFileName);
+
+                ViewData["JokeImageSource"] = $"data:image/{fileExtention};base64,{imageDate}";
+                ViewData["JokeImageAlt"] = "Image Loaded";
+
+                var jokeimg = (string)ViewData["JokeImageSource"];
+                var jokeimgAlt = (string)ViewData["JokeImageAlt"];
+            }
+            <div id="frame" class="d-flex justify-content-center align-content-center" style="width:90px; height:90px; overflow:hidden;">
+                <img src="@jokeimg" style="width:auto; height:100%" />
+
+            </div>
+            <p class="m-1">@item.AppUser.UserName</p>
+        </div>
+        <div class="col">
+
+        
+
+        
+
+
+        
+        <div class="row p-2">
+            
+            <div class="col-3 d-flex justify-content-end">
+                <label>Joke Question: </label>
+            </div>
+            <div class="col-4">
+                @item.JokeQuestion
+            </div>
+        </div>
+        <div class="row p-2">
+        <div class="col-3 d-flex justify-content-end">
+                <label>Joke Answer: </label>
+            </div>
+            <div class="col-4">
+                @item.JokeAnswer
+            </div>
+        </div>
+        <div class="row p-2">
+        <div class="col-3 d-flex justify-content-end border-end">
+                <label>Options:</label>
+            </div>
+            <div class="col-9">
+                <div class="row col-4 d-flex">
+                    <div class="col d-flex justify-content-between">
+                        <a class="btn back-button-color text-colour" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    </div>
+                @{
+                    if (user == null)
+                    {
+                            
+                    }
+                    else
+                    {
+                        @if (User.IsInRole("Admin") || item.AppUserId.Equals(user.Id))
+                        {
+                            <div class="col d-flex justify-content-center">
+                                <a class="btn back-button-color text-colour" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            </div>
+                            <div class="col d-flex justify-content-center">
+                                <a class="btn back-button-color text-colour" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                            </div>
+                        }
+                    }
+                }
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    }
+
+
+

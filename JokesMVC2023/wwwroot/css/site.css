@@ -1,0 +1,47 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.back-background-color {background-color: var(--background-color) !important }
+.back-header-color {background-color: var(--header-color) !important }
+.back-button-color {background-color: var(--button-color) !important }
+.back-border-color {background-color: var(--border-color) !important }
+.back-card-background-color {background-color: var(--card-background-color) !important }
+
+.background-color {color: var(--background-color) !important }
+.header-color {color: var(--header-color) !important }
+.button-color {color: var(--button-color) !important }
+.border-color {color: var(--border-color) !important }
+.card-background-color {color: var(--card-background-color) !important }
+.text-colour {color: var(--text-colour) !important}
+
+a {
+    color: var(--card-background-color)
+}
+a:link {
+    color: var(--header-color)
+}
+
+.card {
+    border-color: var(--border-color) !important;
+}
+
+.btn-primary {
+    background-color: var(--button-color);
+    border-color: var(--border-color);
+}
